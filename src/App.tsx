@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import './App.css'
 import { UAHData, type UAHParsedData } from './UAHData'
+import Plotly from 'plotly.js-dist-min'
 
 function App() {
   const [data, setData] = useState<UAHParsedData | null>(null)
@@ -9,6 +10,7 @@ function App() {
   const [localText, setLocalText] = useState<string | null>(null)
   const [localParse, setLocalParse] = useState<UAHParsedData | null>(null)
   const [localError, setLocalError] = useState<string | null>(null)
+  const plotRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
     // let cancelled = false
@@ -34,6 +36,53 @@ function App() {
     //   cancelled = true
     // }
   }, [])
+
+  useEffect(() => {
+    console.log("plotting")
+    const source = localParse ?? data
+    if (!source || !plotRef.current) {
+      return
+    }
+    else {
+      console.log("got source")
+    }
+    const x: string[] = []
+    const y: number[] = []
+
+    for (const row of source.monthly) {
+      const value = row.values.Globe
+      if (typeof value !== 'number' || Number.isNaN(value)) continue
+      x.push(`${row.year}-${String(row.month).padStart(2, '0')}-01`)
+      y.push(value)
+    }
+
+    void Plotly.newPlot(
+      plotRef.current,
+      [
+        {
+          x,
+          y,
+          type: 'scatter',
+          mode: 'lines',
+          name: 'Globe',
+        },
+      ],
+      {
+        title: 'UAH Globe Monthly Anomaly',
+        xaxis: { title: 'Month' },
+        yaxis: { title: 'Temperature Anomaly (C)' },
+        margin: { t: 40, l: 60, r: 20, b: 50 },
+      },
+      { responsive: true }
+    )
+
+    return () => {
+      if (plotRef.current) {
+        console.log("unmounting plot")
+        Plotly.purge(plotRef.current)
+      }
+    }
+  }, [data, localParse])
 
   return (
     <>
@@ -90,6 +139,11 @@ function App() {
             Latest: {data.monthly.at(-1)?.year}-{String(data.monthly.at(-1)?.month).padStart(2, '0')}
           </p>
           <p>Trend row: {data.trend ? 'available' : 'missing'}</p>
+        </div>
+      )}
+      {!loading && !error && data && (
+        <div className="card">
+          <div ref={plotRef} />
         </div>
       )}
       {localText && (
