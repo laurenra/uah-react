@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
 import './App.css'
 import { UAHData, type UAHParsedData } from './UAHData'
-import Plotly from 'plotly.js-dist-min'
+import Plotly, {type PlotlyHTMLElement} from 'plotly.js-dist-min'
 
 function App() {
   const uahFileName: string = 'UAHTemperaturePlot'
-  const [data, setData] = useState<UAHParsedData | null>(null)
-  const [error, setError] = useState<string | null>(null)
-  const [loading, setLoading] = useState(true)
+  // const [data, setData] = useState<UAHParsedData | null>(null)
+  // const [error, setError] = useState<string | null>(null)
+  // const [loading, setLoading] = useState(true)
   const [localText, setLocalText] = useState<string | null>(null)
   const [localParse, setLocalParse] = useState<UAHParsedData | null>(null)
   const [localError, setLocalError] = useState<string | null>(null)
@@ -50,12 +50,30 @@ function App() {
     }
     const x: string[] = []
     const y: number[] = []
+    const ty: number[] = []
+    const decadeTrend = source.trend?.values.Globe ?? 0
+    const monthlyTrend = (source.trend?.values.Globe ?? 0) / 120 // divide by 120 to get monthly trend
+    let trendValue = 0
+    console.log("monthlyTrend", monthlyTrend);
 
-    for (const row of source.monthly) {
+    // for (const row of source.monthly) {
+    //   const value = row.values.Globe
+    //   if (typeof value !== 'number' || Number.isNaN(value)) continue
+    //   x.push(`${row.year}-${String(row.month).padStart(2, '0')}-01`)
+    //   y.push(value)
+    //   ty.push(trendValue * row)
+    // }
+
+    for (const [i, row] of source.monthly.entries()) {
       const value = row.values.Globe
       if (typeof value !== 'number' || Number.isNaN(value)) continue
       x.push(`${row.year}-${String(row.month).padStart(2, '0')}-01`)
       y.push(value)
+      if (i === 0) {
+        trendValue = value
+      }
+      ty.push(trendValue)
+      trendValue += monthlyTrend
     }
 
 
@@ -64,12 +82,19 @@ function App() {
       plotRef.current,
       [
         {
-          x,
-          y,
+          x: x,
+          y: y,
           type: 'scatter',
           mode: 'lines',
           name: 'Globe',
         },
+        {
+          x: x,
+          y: ty,
+          type: 'scatter',
+          mode: 'lines',
+          name: 'Trend ' + decadeTrend.toFixed(2) + '°C/decade',
+        }
       ],
       {
         title: { text: 'UAH Globe Monthly Anomaly'},
@@ -82,17 +107,19 @@ function App() {
         // toImageButtonOptions: { format: 'png', filename: uahFileName, height: 500, width: 1250, scale: 2 },
         modeBarButtonsToAdd: [
           {
-            name: 'Download as PNG',
+            name: 'PNG',
+            title: 'Download as PNG',
             icon: Plotly.Icons.camera,
-            click: function (plotRef) {
+            click: (plotRef: PlotlyHTMLElement) => {
               Plotly.downloadImage(plotRef,
                 {format: 'png', filename: uahFileName, height: plotRef.offsetHeight, width: plotRef.offsetWidth, scale: 2})
             }
           },
           {
-            name: 'Download as SVG',
+            name: 'SVG',
+            title: 'Download as SVG',
             icon: Plotly.Icons.disk,
-            click: function (plotRef) {
+            click: (plotRef: PlotlyHTMLElement) => {
               Plotly.downloadImage(plotRef,
                 {format: 'svg', filename: uahFileName, height: plotRef.offsetHeight, width: plotRef.offsetWidth, scale: 1})
             }
