@@ -39,7 +39,8 @@ function App() {
 
   useEffect(() => {
     console.log("plotting")
-    const source = localParse ?? data
+    // const source = localParse ?? data
+    const source = localParse
     if (!source || !plotRef.current) {
       return
     }
@@ -82,7 +83,8 @@ function App() {
         Plotly.purge(plotRef.current)
       }
     }
-  }, [data, localParse])
+  // }, [data, localParse])
+  }, [localParse])
 
   return (
     <>
@@ -129,19 +131,17 @@ function App() {
           </p>
         )}
       </div>
-      {loading && <p>Loading latest data…</p>}
-      {error && <p>Failed to load: {error}</p>}
-      {!loading && !error && data && (
+      {localParse && (
         <div className="card">
-          <p>Monthly rows: {data.monthly.length}</p>
-          <p>Columns: {data.columns.length}</p>
+          <p>Monthly rows: {localParse.monthly.length}</p>
+          <p>Columns: {localParse.columns.length}</p>
           <p>
-            Latest: {data.monthly.at(-1)?.year}-{String(data.monthly.at(-1)?.month).padStart(2, '0')}
+            Latest: {localParse.monthly.at(-1)?.year}-{String(localParse.monthly.at(-1)?.month).padStart(2, '0')}
           </p>
-          <p>Trend row: {data.trend ? 'available' : 'missing'}</p>
+          <p>Trend row: {localParse.trend ? 'available' : 'missing'}</p>
         </div>
       )}
-      {!loading && !error && data && (
+      {localParse && (
         <div className="card">
           <div ref={plotRef} />
         </div>
