@@ -4,6 +4,7 @@ import { UAHData, type UAHParsedData } from './UAHData'
 import Plotly from 'plotly.js-dist-min'
 
 function App() {
+  const uahFileName: string = 'UAHTemperaturePlot'
   const [data, setData] = useState<UAHParsedData | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
@@ -57,6 +58,8 @@ function App() {
       y.push(value)
     }
 
+
+
     void Plotly.newPlot(
       plotRef.current,
       [
@@ -69,12 +72,33 @@ function App() {
         },
       ],
       {
-        title: 'UAH Globe Monthly Anomaly',
-        xaxis: { title: 'Month' },
-        yaxis: { title: 'Temperature Anomaly (C)' },
+        title: { text: 'UAH Globe Monthly Anomaly'},
+        xaxis: { title: { text: 'Month' } },
+        yaxis: { title: { text: 'Temperature Anomaly (°C)' } },
         margin: { t: 40, l: 60, r: 20, b: 50 },
       },
-      { responsive: true }
+      { responsive: true,
+        modeBarButtonsToRemove: ['toImage'],
+        // toImageButtonOptions: { format: 'png', filename: uahFileName, height: 500, width: 1250, scale: 2 },
+        modeBarButtonsToAdd: [
+          {
+            name: 'Download as PNG',
+            icon: Plotly.Icons.camera,
+            click: function (plotRef) {
+              Plotly.downloadImage(plotRef,
+                {format: 'png', filename: uahFileName, height: plotRef.offsetHeight, width: plotRef.offsetWidth, scale: 2})
+            }
+          },
+          {
+            name: 'Download as SVG',
+            icon: Plotly.Icons.disk,
+            click: function (plotRef) {
+              Plotly.downloadImage(plotRef,
+                {format: 'svg', filename: uahFileName, height: plotRef.offsetHeight, width: plotRef.offsetWidth, scale: 1})
+            }
+          }
+        ]
+      }
     )
 
     return () => {
