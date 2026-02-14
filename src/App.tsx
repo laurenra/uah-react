@@ -98,7 +98,27 @@ function App() {
       ],
       {
         title: { text: 'UAH Globe Monthly Anomaly'},
-        xaxis: { title: { text: 'Month' } },
+        xaxis: {
+          title: { text: 'Month' },
+          // showspikes: true,
+          // spikemode: 'across',
+          // spikesnap: 'cursor',
+          // spikedash: 'dot',
+          // spikecolor: 'red',
+          // spikethickness: 2,
+          type: 'date',
+          showgrid: true,
+          gridcolor: 'darkgray',
+          griddash: 'solid',
+          dtick: 'M60',
+          minor: {
+            showgrid: true,
+            gridcolor: 'lightgray',
+            griddash: 'dot',
+            dtick: 'M12',
+          }
+
+        },
         yaxis: { title: { text: 'Temperature Anomaly (°C)' } },
         margin: { t: 40, l: 60, r: 20, b: 50 },
       },

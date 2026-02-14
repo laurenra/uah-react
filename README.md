@@ -71,3 +71,8 @@ export default defineConfig([
   },
 ])
 ```
+
+## TODO
+- [x] Add vertical dashed lines for each year (e.g.; 4 between 2020 and 2025)
+- [ ] Adjust Trend line upward so it's halfway between the highest and lowest points
+- [ ] Get data from API instead of hard-coded values
