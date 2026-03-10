@@ -1,3 +1,25 @@
+# UAH React
+A simple React template for UAH temperature data. It displays the current 
+temperature and a trend line using the Plotly JavaScript plotting library 
+for the data in the uahncdc_lt_6.1.txt file.
+
+## Use
+
+Start the server locally:
+
+```aiignore
+nvm use v22
+npm run dev
+```
+
+View the endpoint in a browser at `http://localhost:5173`
+
+## Deploy
+
+## Build
+
+
+
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.

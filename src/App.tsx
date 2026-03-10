@@ -132,7 +132,8 @@ function App() {
             icon: Plotly.Icons.camera,
             click: (plotRef: PlotlyHTMLElement) => {
               Plotly.downloadImage(plotRef,
-                {format: 'png', filename: uahFileName, height: plotRef.offsetHeight, width: plotRef.offsetWidth, scale: 2})
+                // {format: 'png', filename: uahFileName, height: plotRef.offsetHeight, width: plotRef.offsetWidth, scale: 2})
+                {format: 'png', filename: uahFileName, height: plotRef.offsetHeight, width: plotRef.offsetWidth})
             }
           },
           {
@@ -141,7 +142,8 @@ function App() {
             icon: Plotly.Icons.disk,
             click: (plotRef: PlotlyHTMLElement) => {
               Plotly.downloadImage(plotRef,
-                {format: 'svg', filename: uahFileName, height: plotRef.offsetHeight, width: plotRef.offsetWidth, scale: 1})
+                // {format: 'svg', filename: uahFileName, height: plotRef.offsetHeight, width: plotRef.offsetWidth, scale: 1})
+                {format: 'svg', filename: uahFileName, height: plotRef.offsetHeight, width: plotRef.offsetWidth})
             }
           }
         ]
